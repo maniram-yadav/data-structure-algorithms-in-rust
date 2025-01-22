@@ -1,0 +1,10 @@
+[package]
+name = "data-structure-algorithms-in-rust"
+version = "1.1"
+authors = ["Maniram yadav"]
+edition = "2025"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/maniram-yadav/data-structure-algorithms-in-rust"
+
+[dependencies]
+log = "0.4"
