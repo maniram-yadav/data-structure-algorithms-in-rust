@@ -7,3 +7,10 @@ repository = "https://github.com/maniram-yadav/data-structure-algorithms-in-rust
 
 [dependencies]
 log = "0.4"
+
+[lints.rust]
+unused = "allow"
+unsafe_code = "forbid"
+
+[lints.clippy]
+enum_glob_use = "deny"

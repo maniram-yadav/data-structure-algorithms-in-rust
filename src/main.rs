@@ -1,6 +1,10 @@
 
 mod array;
+mod tree;
 
+use tree::binarytree::{BinaryTree,BinaryNode};
+
+#[allow(dead_code)]
 fn main(){
     let  arr = vec!{91,12,3,78};
 
@@ -12,4 +16,12 @@ fn main(){
     clone = arr.clone();
     array::selection::sort(&mut clone);
     println!("Sorted array {:?}",clone);
+
+    let mut btree : &mut BinaryTree<i32> =  &mut BinaryTree::new();
+    println!("{}",btree.root().is_filled());
+    let mut root :  &mut BinaryNode<i32> = btree.root_mut();
+    let _left1 = root.append_left(14).ok();    
+    let _right1 = root.append_right(19).ok();
+
+    // root.print_value();
 }
