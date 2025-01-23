@@ -1,6 +1,7 @@
 
 mod array;
 mod tree;
+mod queue;
 
 use tree::binarytree::{BinaryTree,BinaryNode};
 
