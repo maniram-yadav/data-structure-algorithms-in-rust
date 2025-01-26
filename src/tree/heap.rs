@@ -15,11 +15,13 @@ impl<T> Heap<T> {
         }
     }
 
-    pub fn from_vec(items:Vec<T>, comparator : fn (&T,&T)->bool)->Self {
-        Self {
+    pub fn from_vec(items:Vec<T>, comparator : fn (&T,&T)->bool) -> Self {
+       let mut heap =  Self {
             items,
             comparator,
-        }
+        };
+        heap.heapify();
+        heap
     }
 
     
@@ -52,9 +54,11 @@ impl<T> Heap<T> {
     
     
      fn heapify_up(&mut self,mut index : usize){
+            println!("Inside heapify down");
             while let  Some(parent_index) = self.parent_index(index){
                 if (self.comparator)(&self.items[index],&self.items[parent_index]){
                         self.items.swap(parent_index,index);
+                        index = parent_index;
                 } else {
                     break;
                 }
@@ -63,6 +67,7 @@ impl<T> Heap<T> {
 
     
      fn heapify_down(&mut self,mut index : usize){
+        println!("Inside heapify down");
         while self.is_children_present(index) {
 
             let current_index = {
@@ -72,10 +77,10 @@ impl<T> Heap<T> {
                     } else{
                         let leftindex = self.left_child(index);
                         let rightindex = self.right_child(index);
-                        if (self.comparator)(&self.items[index],&self.items[rightindex]){
-                                leftindex
+                        if (self.comparator)(&self.items[leftindex],&self.items[rightindex]){
+                                rightindex
                         } else {
-                            rightindex
+                                leftindex
                         }
                     }
                 
@@ -100,6 +105,13 @@ impl<T> Heap<T> {
         }
     }
     
+    pub fn peek(&self) -> Option<&T> {
+        if !self.is_empty(){
+            return  Some(&self.items[0]);
+        }
+        None
+    }
+
     pub fn is_empty(&self) -> bool {
         self.len()==0
     }
@@ -133,4 +145,17 @@ impl<T> Heap<T> where T:Ord {
     pub fn from_vec_max(items:Vec<T>) ->Heap<T>{
         Self::from_vec(items,|a,b| a>b)
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_empty_heap(){
+        let mut heap:Heap<i16> = Heap::new_max();
+        assert_eq!(heap.pop(),None);
+
+    }
+
 }
