@@ -1,0 +1,3 @@
+cargo test -- --show-output
+cargo build
+cargo run

@@ -1,7 +1,8 @@
 
 mod array;
 mod tree;
-mod queue;
+
+mod concurrent;
 
 use tree::binarytree::{BinaryTree,BinaryNode};
 
