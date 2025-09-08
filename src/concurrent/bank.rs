@@ -85,37 +85,148 @@ mod tests {
         assert_eq!(account2.get_balance(), 800.0);
     }
 
-    //   #[test]
-    // fn concurrent_transfers() {
+    #[test]
+    fn concurrent_transfers() {
+    // Create thread-safe wrappers
+    let account_a = Arc::new(ThreadSafeAccount::new(BankAccount::new("1".to_string(), 1000.0)));
+    let account_b = Arc::new(ThreadSafeAccount::new(BankAccount::new("2".to_string(), 500.0)));
+    let account_c = Arc::new(ThreadSafeAccount::new(BankAccount::new("3".to_string(), 750.0)));
+
+    let mut handles = vec![];
+
+    // Transfer from A to B
+    for i in 0..5 {
+        let a = Arc::clone(&account_a);
+        let b = Arc::clone(&account_b);
         
-    //     let account_a = Arc::new(BankAccount::new("A8989".to_string(),1000.0));
-    //     let account_b = Arc::new(BankAccount::new("45B6".to_string(),500.0));
-    //     let handles: Vec<_> = (0..10)
-    //         .map(|i| {
-    //             let  a = Arc::clone(&account_a);
-    //             let b = Arc::clone(&account_b);
+        handles.push(thread::spawn(move || {
+            thread::sleep(Duration::from_millis(i * 20));
+            match a.transfer(&b, 50.0) {
+                Ok(_) => println!("Thread {}: A->B transfer successful", i),
+                Err(e) => println!("Thread {}: A->B transfer failed: {}", i, e),
+            }
+        }));
+    }
 
-    //             thread::spawn(move || {
-    //                 thread::sleep(Duration::from_millis(i * 10));
-    //                 if i % 2 == 0 {
-    //                     a.transfer( 50.0,&mut Arc::clone(&account_b)).unwrap()
-                    
-    //                 } else {
-    //                     b.transfer(25.0,&mut a).unwrap()
-    //                 }
-    //             })
-    //         })
-    //         .collect();
-    //     for handle in handles {
-    //         handle.join().unwrap();
-    //         println!(
-    //             "Final balances - A: {:.2}, B: {:.2}",
-    //             *account_a.balance.lock().unwrap(),
-    //             *account_b.balance.lock().unwrap()
-    //         );
-    //     }
+    // Transfer from B to C
+    for i in 5..10 {
+        let b = Arc::clone(&account_b);
+        let c = Arc::clone(&account_c);
+        
+        handles.push(thread::spawn(move || {
+            thread::sleep(Duration::from_millis(i * 20));
+            match b.transfer(&c, 25.0) {
+                Ok(_) => println!("Thread {}: B->C transfer successful", i),
+                Err(e) => println!("Thread {}: B->C transfer failed: {}", i, e),
+            }
+        }));
+    }
 
-    // }
+    // Transfer from C to A
+    for i in 10..15 {
+        let c = Arc::clone(&account_c);
+        let a = Arc::clone(&account_a);
+        
+        handles.push(thread::spawn(move || {
+            thread::sleep(Duration::from_millis(i * 20));
+            match c.transfer(&a, 10.0) {
+                Ok(_) => println!("Thread {}: C->A transfer successful", i),
+                Err(e) => println!("Thread {}: C->A transfer failed: {}", i, e),
+            }
+        }));
+    }
+
+    // Complex multi-account transfers
+    for i in 15..20 {
+        let a = Arc::clone(&account_a);
+        let b = Arc::clone(&account_b);
+        let c = Arc::clone(&account_c);
+        
+        handles.push(thread::spawn(move || {
+            thread::sleep(Duration::from_millis(i * 20));
+            
+            // Chain transfers: A->B then B->C
+            if i % 2 == 0 {
+                if let Ok(_) = a.transfer(&b, 30.0) {
+                    thread::sleep(Duration::from_millis(10));
+                    match b.transfer(&c, 15.0) {
+                        Ok(_) => println!("Thread {}: A->B->C chain successful", i),
+                        Err(e) => println!("Thread {}: B->C chain failed: {}", i, e),
+                    }
+                }
+            } else {
+                // Direct transfer C->A
+                match c.transfer(&a, 20.0) {
+                    Ok(_) => println!("Thread {}: C->A direct successful", i),
+                    Err(e) => println!("Thread {}: C->A direct failed: {}", i, e),
+                }
+            }
+        }));
+    }
+
+    // Wait for all transfers to complete
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    // Verify final balances
+    println!("\nFinal Balances:");
+    println!("Account {}: {:.2}", account_a.account.lock().unwrap().account_number, account_a.get_balance());
+    println!("Account {}: {:.2}", account_b.account.lock().unwrap().account_number, account_b.get_balance());
+    println!("Account {}: {:.2}", account_c.account.lock().unwrap().account_number, account_c.get_balance());
+
+    // Verify conservation of money
+    let total_initial = 1000.0 + 500.0 + 750.0;
+    let total_final = account_a.get_balance() + account_b.get_balance() + account_c.get_balance();
+    
+    println!("Total money conservation: {:.2} -> {:.2} ({})", 
+        total_initial, total_final, 
+        if (total_initial - total_final).abs() < 0.01 { "PASS" } else { "FAIL" });
+}
+
+// Additional test cases
+fn test_insufficient_funds() {
+    println!("\n=== Testing Insufficient Funds ===");
+    
+    let account_a = ThreadSafeAccount::new(BankAccount::new("1".to_string(), 100.0));
+    let account_b = ThreadSafeAccount::new(BankAccount::new("2".to_string(), 50.0));
+    
+    // Try to transfer more than available
+    match account_a.transfer(&account_b, 200.0) {
+        Ok(_) => println!("Unexpected: Transfer should have failed"),
+        Err(e) => println!("Expected failure: {}", e),
+    }
+    
+    println!("Account 1 balance: {:.2}", account_a.get_balance());
+    println!("Account 2 balance: {:.2}", account_b.get_balance());
+}
+
 
     
+}
+
+
+
+
+
+struct ThreadSafeAccount {
+    account: Mutex<BankAccount>,
+}
+
+impl ThreadSafeAccount {
+    fn new(account: BankAccount) -> Self {
+        Self {
+            account: Mutex::new(account),
+        }
+    }
+
+    fn transfer(&self, target: &ThreadSafeAccount, amount: f64) -> Result<(), String> {
+        let mut source = self.account.lock().unwrap();
+        let mut target = target.account.lock().unwrap();
+        source.transfer(amount,&mut *target            )
+    }
+
+    fn get_balance(&self) -> f64 {
+        self.account.lock().unwrap().get_balance()
+    }
 }

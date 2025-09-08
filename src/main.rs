@@ -1,10 +1,11 @@
 
 mod array;
 mod tree;
-
 mod concurrent;
 
 use tree::binarytree::{BinaryTree,BinaryNode};
+use concurrent::concurrent::*;
+
 
 #[allow(dead_code)]
 fn main(){
@@ -26,4 +27,6 @@ fn main(){
     let _right1 = root.append_right(19).ok();
 
     // root.print_value();
+    ConcurrentTest::new().test_dining_philosopher();
+
 }

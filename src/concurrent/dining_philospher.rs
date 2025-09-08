@@ -2,10 +2,10 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
-struct Philospher {
-    name: String,
-    left_fork: Arc<Mutex<i32>>,
-    right_fork: Arc<Mutex<i32>>,
+pub struct Philospher {
+  pub   name: String,
+  pub  left_fork: Arc<Mutex<i32>>,
+    pub right_fork: Arc<Mutex<i32>>,
 }
 
 impl Philospher {
@@ -69,3 +69,5 @@ impl Philospher {
         }
     }
 }
+
+
