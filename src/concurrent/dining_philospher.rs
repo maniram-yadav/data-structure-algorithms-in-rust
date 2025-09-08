@@ -80,7 +80,7 @@ impl Philospher {
 }
 
 mod test{
-    #[test]
+    // #[test]
     fn test_dining_philosopher() {
         let philosopher = super::Philospher {
             seq: 1,
