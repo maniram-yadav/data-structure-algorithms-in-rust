@@ -3,6 +3,7 @@ mod array;
 mod tree;
 mod concurrent;
 mod features;
+mod macros;
 
 use tree::binarytree::{BinaryTree,BinaryNode};
 use concurrent::concurrent::*;
