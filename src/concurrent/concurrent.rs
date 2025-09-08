@@ -12,6 +12,7 @@ impl ConcurrentTest {
 
     pub fn test_dining_philosopher(&self) {
         let philosopher = Philospher {
+            seq : 1,
             name: "Philosopher 1".to_string(),
             left_fork: Arc::new(Mutex::new(0)),
             right_fork: Arc::new(Mutex::new(0)),
