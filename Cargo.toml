@@ -8,6 +8,7 @@ repository = "https://github.com/maniram-yadav/data-structure-algorithms-in-rust
 
 [dependencies]
 log = "0.4"
+crossbeam = "0.8"
 
 [lints.rust]
 unused = "allow"
