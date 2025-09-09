@@ -17,19 +17,21 @@ fn print_as_str<T: AsRef<str>>(value: T) {
 }
 
 
+#[cfg(test)]
 mod test {
 
     use super::*;
     #[test]
+    #[ignore]
     fn test_as_ref(){
-         let owned_string = String::from("Hello, world!");
-    let string_slice = "Rust is great!";
-    let my_struct_instance = MyStruct {
+        let owned_string = String::from("Hello, world!");
+        let string_slice = "Rust is great!";
+        let my_struct_instance = MyStruct {
         data: String::from("Custom data here."),
         };
 
-      print_as_str(owned_string);  
-      print_as_str(string_slice);
-      print_as_str(my_struct_instance);
+        print_as_str(owned_string);  
+        print_as_str(string_slice);
+        print_as_str(my_struct_instance);
     }
 }

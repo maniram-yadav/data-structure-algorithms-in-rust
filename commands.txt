@@ -1,3 +1,6 @@
 cargo test -- --show-output
+cargo test ref -- --show-output
+cargo test --test '*'
+cargo test --lib 
 cargo build
 cargo run
