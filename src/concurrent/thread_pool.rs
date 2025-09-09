@@ -64,12 +64,10 @@ impl Worker {
 impl Drop for ThreadPool {
 
         fn drop(&mut self) {
-
             for worker in &mut self.workers {
                 if let Some(thread) = worker.thread.take() {
                              thread.join().unwrap();
-                }
-           
+                }           
             }
         }
 }
@@ -91,6 +89,6 @@ mod test {
                 });
             }
 
-            thread::sleep(  Duration::from_secs(4));
+            thread::sleep(Duration::from_secs(4));
     }
 }
