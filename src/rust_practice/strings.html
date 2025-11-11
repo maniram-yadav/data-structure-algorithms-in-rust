@@ -1,0 +1,297 @@
+
+https://practice.course.rs/compound-types/string.html
+
+// Fix error without adding new line
+fn main() {
+    let s: &str = "hello, world";
+
+    println!("Success!");
+}
+
+
+// Fix the error with at least two solutions
+fn main() {
+    let s: Box<str> = "hello, world".into();
+    greetings(&*s);
+}
+
+fn greetings(s: &str) {
+    println!("{}",s);
+}
+
+
+// Fix the error with at least two solutions
+fn main() {
+    let s: &str = "hello, world".into();
+    greetings(s);
+}
+
+fn greetings(s: &str) {
+    println!("{}",s);
+}
+
+
+// Fix the error with at least two solutions
+fn main() {
+    let s: Box<str> = "hello, world".into();
+    greetings(&s);
+}
+
+fn greetings(s: &str) {
+    println!("{}",s);
+}
+
+
+// Fix all errors without adding newline
+fn main() {
+    let mut s = String::from("hello");
+    s.push(',');
+    s.push_str(" world");
+    s += "!";
+
+    println!("{}", s);
+}
+
+
+
+// Fill the blank
+fn main() {
+    let s = String::from("  I like dogs");
+    // Allocate new memory and store the modified string there
+    let s1 = s.replace("dogs", "cats");
+    let slice = &s[0..5];
+
+
+    println!("String  = {}", s.trim());
+    println!("String trimmed = {}", s.trim());
+    
+    let words_iter = s.split_whitespace();
+    let mut count =  0;
+    for word in words_iter {
+      print!("{}:{},",count,word);
+    }
+    println!();
+    
+    let words_iter = s.split("like");
+    let mut count =  0;
+    for word in words_iter {
+      print!("{}:{},",count,word);
+    }
+    
+    println!();
+        // Collecting into a Vec
+    let words_vec: Vec<&str> = s.split_whitespace().collect();
+    println!("{:?}", words_vec);
+
+     
+    println!("slice = {}", slice);
+    println!("slice Length = {}", slice.len());
+    println!("String trimmed = {}", slice.trim());
+    assert_eq!(s1.trim(), "I like cats");
+    for char in s.chars() {
+        print!("{} ", char);
+    }
+
+
+
+  // let sparkle_heart = vec![240, 159, 146, 150];
+  // let sparkle_heart = String::from_utf8(sparkle_heart).unwrap();
+  // println!("{}",sparkle_heart);
+  println!("Success!");
+}
+
+
+
+fn main() {
+    let s1 = String::from("hello,");
+    let s2 = String::from("world!");
+    let s3 = s1 + &s2; 
+    assert_eq!(s3, "hello,world!");
+    println!("{}", s2);
+}
+
+
+fn main() {
+    let s1 = String::from("hello,");
+    let s2 = String::from("world!");
+    
+    let s3 = format!("{}{}", s1, s2);
+    println!("{}",s3);
+    
+    let s3 = [&s1, ", ", &s2, "!"].concat();
+    println!("{}",s3);
+    
+      
+    let s3 = s1 + &s2; 
+    assert_eq!(s3, "hello,world!");
+    
+    println!("{}", s2);
+}
+
+
+fn main() {
+   let example_string = String::from("example_string");
+   print_literal(example_string.as_str());
+}
+fn print_literal(data:&str ){
+   println!("displaying string literal {}",data);
+}
+
+fn main(){
+   let number = 2020;
+   let number_as_string = number.to_string(); 
+   
+   // convert number to string
+   println!("{}",number_as_string);
+   println!("{}",number_as_string=="2020");
+}
+fn main(){
+   let number = 2020;
+   let number_as_string = number.to_string(); 
+   
+   // convert number to string
+   println!("{}",number_as_string);
+   println!("{}",number_as_string=="2020");
+}
+fn main(){
+   let n1 = "Tutorials".to_string();
+   let n2 = "Point".to_string();
+   let n3 = format!("{} {}",n1,n2);
+   println!("{}",n3);
+}
+
+// Fix error with at least two solutions
+fn main() {
+    let s = "hello, world";
+    greetings(String::from(s))
+}
+
+fn greetings(s: String) {
+    println!("{}", s)
+}
+
+// Use two approaches to fix the error and without adding a new line
+fn main() {
+    let s = "hello, world".to_string();
+    let s1: &str = &s[0..s.len()/2];
+
+    println!("Success!");
+}
+fn main() {
+    // You can use escapes to write bytes by their hexadecimal values
+    // Fill the blank below to show "I'm writing Rust"
+    let byte_escape = "I'm writing Ru\x73\x74!";
+    println!("What are you doing\x3F (\\x3F means ?) {}", byte_escape);
+
+  
+
+    let long_string = "String literals
+                        can span multiple lines.
+                        The linebreak and indentation here \
+                        can be escaped too!";
+    println!("{}", long_string);
+}
+
+use std::ffi::OsString;
+
+fn main() {
+    let rust_string = String::from("hello from Rust");
+    let os_string: OsString = rust_string.into(); 
+    println!("OsString: {:?}", os_string);
+}
+
+use std::ffi::OsString;
+
+fn main() {
+    let os_string = OsString::from("this is an OsString literal");
+    println!("OsString: {:?}", os_string);
+}
+
+use std::ffi::OsString;
+
+fn main() {
+  
+    let os_string_valid = OsString::from("valid unicode path");
+    let os_string_invalid = {
+        // Create an OsString with potentially invalid UTF-8 (platform-dependent)
+        #[cfg(unix)]
+        {
+            use std::os::unix::ffi::OsStringExt;
+            OsString::from_vec(vec![0x66, 0x6f, 0x6f, 0xFF]) // "foo" with an invalid byte
+        }
+        #[cfg(windows)]
+        {
+            use std::os::windows::ffi::OsStringExt;
+            OsString::from_wide(&[0x0066, 0x006f, 0x006f, 0xD800]) // "foo" with a lone surrogate
+        }
+        #[cfg(not(any(unix, windows)))]
+        {
+            OsString::from("fallback_invalid_string")
+        }
+    };
+
+    match os_string_valid.into_string() {
+        Ok(s) => println!("Converted valid OsString: {}", s),
+        Err(os_string) => println!("Failed to convert valid OsString: {:?}", os_string),
+    }
+
+    match os_string_invalid.into_string() {
+        Ok(s) => println!("Converted invalid OsString: {}", s),
+        Err(os_string) => println!("Failed to convert invalid OsString: {:?}", os_string),
+    }
+}
+
+
+
+use std::ffi::OsString;
+
+fn main() {
+    let mut os_string = OsString::from("prefix_");
+    os_string.push("suffix");
+    println!("Appended OsString: {:?}", os_string);
+}
+
+
+use std::str;
+
+fn main() {
+    // Note that this is not actually a `&str`
+    let bytestring: &[u8; 21] = b"this is a byte string";
+
+    // Byte arrays don't have the `Display` trait, so printing them is a bit limited
+    println!("A byte string: {:?}", bytestring);
+
+    // Byte strings can have byte escapes...
+    let escaped = b"\x52\x75\x73\x74 as bytes";
+    // ...But no unicode escapes
+    // let escaped = b"\u{211D} Is not allowed";
+    println!("Some escaped bytes: {:?}", escaped);
+
+
+    // Raw byte strings work just like raw strings
+    let raw_bytestring = br"\u{211D} is not escaped here";
+    println!("{:?}", raw_bytestring);
+
+    // Converting a byte array to `str` can fail
+    if let Ok(my_str) = str::from_utf8(raw_bytestring) {
+        println!("And the same as text: '{}'", my_str);
+    }
+
+    let _quotes = br#"You can also use "fancier" formatting, \
+                    like with normal raw strings"#;
+
+    // Byte strings don't have to be UTF-8
+    let shift_jis = b"\x82\xe6\x82\xa8\x82\xb1\x82\xbb"; // "ようこそ" In SHIFT-JIS
+
+    // But then they can't always be converted to `str`
+    match str::from_utf8(shift_jis) {
+        Ok(my_str) => println!("Conversion successful: '{}'", my_str),
+        Err(e) => println!("Conversion failed: {:?}", e),
+    };
+}
+
+
+
+
+
+
