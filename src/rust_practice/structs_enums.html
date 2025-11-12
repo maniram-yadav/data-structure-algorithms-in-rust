@@ -1,0 +1,449 @@
+
+
+https://practice.course.rs/compound-types/struct.html
+
+// Fix the error
+struct Person {
+    name: String,
+    age: u8,
+    hobby: String
+}
+fn main() {
+    let age = 30;
+    let p = Person {
+        name: String::from("sunface"),
+        age,
+        hobby: String::from("singing")
+        
+    };
+
+    println!("Success!");
+} 
+
+
+struct Unit;
+trait SomeTrait {
+    // ...Some behaviors defined here.
+}
+
+// We don't care about what fields  are  in the Unit, but we care about its behaviors.
+// So we use a struct with no fields and implement some behaviors for it
+impl SomeTrait for Unit {  }
+fn main() {
+    let u = Unit;
+    do_something_with_unit(u);
+
+    println!("Success!");
+} 
+
+// Fill the blank to make the code work
+fn do_something_with_unit(u: Unit) {   }
+
+
+fn main() {
+    let status_code = (200, "OK");
+
+    match status_code {
+        (200, message) => println!("Success: {}", message),
+        (404, _) => println!("Not Found"), // Ignore the message for 404
+        (code, message) => println!("Error {}: {}", code, message),
+    }
+
+    let triple = (0, -2, 3);
+    match triple {
+        // Destructure specific elements and match on their values
+        (0, y, z) => println!("First is 0, y is {}, z is {}", y, z),
+        // Match only the first element and ignore the rest
+        (1, ..) => println!("First is 1"),
+        // Match only the last element and ignore the rest
+        (.., 2) => println!("Last is 2"),
+        _ => println!("Something else"),
+    }
+}
+
+
+// Fill the blank and fix the error without adding/removing new line
+struct Person {
+    name: String,
+    age: u8,
+}
+fn main() {
+    let age = 18;
+    let mut p = Person {
+        name: String::from("sunface"),
+        age,
+    };
+
+    // How can you believe sunface is only 18? 
+    p.age = 30;
+
+    // Fill the blank
+    p.name = String::from("sunfei");
+
+    println!("Success!");
+}
+
+
+// Fill the blank
+struct Person {
+    name: String,
+    age: u8,
+}
+fn main() {
+    let person = build_person(String::from("Hello"),10);
+    println!("Success!");
+} 
+
+fn build_person(name: String, age: u8) -> Person {
+    Person {
+        age,
+        name
+    }
+}
+
+
+// Fill the blank to make the code work
+struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u64,
+}
+fn main() {
+    let u1 = User {
+        email: String::from("someone@example.com"),
+        username: String::from("sunface"),
+        active: true,
+        sign_in_count: 1,
+    };
+
+    let u2 = set_email(u1);
+
+    println!("Success!");
+} 
+
+fn set_email(u: User) -> User {
+    User {
+        email: String::from("contact@im.dev"),
+        ..u
+    }
+}
+
+
+// Fill the blanks to make the code work
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let scale = 2;
+    let rect1 = Rectangle {
+        width: dbg!(30 * scale), // Print debug info to stderr and assign the value of  `30 * scale` to `width`
+        height: 50,
+    };
+
+    dbg!(&rect1); // Print debug info to stderr
+
+    println!("{:?}", rect1); // Print debug info to stdout
+}
+
+
+// Fix errors to make it work
+#[derive(Debug)]
+struct File {
+    name: String,
+    data: String,
+}
+fn main() {
+    let f = File {
+        name: String::from("readme.md"),
+        data: "Rust By Practice".to_string()
+    };
+
+    let _name = f.name;
+
+    // ONLY modify this line
+    println!("{}, {}",5, f.data);
+} 
+
+https://practice.course.rs/compound-types/enum.html
+
+
+
+// Fix the errors
+enum Number {
+    Zero,
+    One,
+    Two,
+}
+
+enum Number1 {
+    Zero = 0,
+    One,
+    Two,
+}
+
+// C-like enum
+enum Number2 {
+    Zero = 0,
+    One = 1,
+    Two = 2,
+}
+
+
+fn main() {
+    // An enum variant can be converted to a integer by `as`
+    assert_eq!(Number::One as u8, Number1::One as u8);
+    assert_eq!(Number1::One as u8, Number2::One as u8);
+
+    println!("Success!");
+} 
+
+
+#[derive(Debug)]
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn main() {
+    let msg1 = Message::Move{x:1,y:2}; // Instantiating with x = 1, y = 2 
+    let msg2 = Message::Write("hello , world".to_string()); // Instantiating with "hello, world!"
+    let msg3 = Message::ChangeColor(3,7,9); // Instantiating with "hello, world!"
+
+    
+    println!("{:?} ",msg1);
+    println!("{:?} ",msg2);
+    println!("{:?} ",msg3);
+    println!("Success!");
+} 
+
+
+
+
+// Fill in the blank and fix the error
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn main() {
+    let msg = Message::Move{x: 1, y: 2};
+
+    if let Message::Move{x:a,y:b} = msg {
+        assert_eq!(a, b-1);
+    } else {
+        panic!("NEVER LET THIS RUN！");
+    }
+
+    println!("Success!");
+} 
+
+
+
+
+// Fill in the blank and fix the errors
+#[derive(Debug)]
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn main() {
+    let msgs: [Message;3] = [
+        Message::Quit,
+        Message::Move{x:1, y:3},
+        Message::ChangeColor(255,255,0)
+    ];
+
+    for msg in &msgs {
+        show_message(msg)
+    }
+} 
+
+fn show_message(msg: &Message) {
+    println!("{:?}", msg);
+}
+
+
+// Fill in the blank to make the `println` work.
+// Also add some code to prevent the `panic` from running.
+fn main() {
+    let five = Some(5);
+    let six = plus_one(five);
+    let none = plus_one(None);
+
+    if let Some(n) = six {
+        println!("{}", n);
+
+        println!("Success!");
+    } 
+        
+    panic!("NEVER LET THIS RUN");
+} 
+
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(i) => Some(i + 1),
+    }
+}
+
+
+
+
+use crate::List::*;
+
+enum List {
+    Cons(u32, Box<List>),
+    Nil,
+}
+
+// Methods can be attached to an enum
+impl List {
+    // Create an empty list
+    fn new() -> List {
+        Nil
+    }
+
+    // Consume a list, and return the same list with a new element at its front
+    fn prepend(self, elem: u32) -> List {
+        // `Cons` also has type List
+        Cons(elem, Box::new(self))
+    }
+
+    // Return the length of the list
+    fn len(&self) -> u32 {
+        // `self` has to be matched, because the behavior of this method
+        // depends on the variant of `self`
+        // `self` has type `&List`, and `*self` has type `List`, matching on a
+        // concrete type `T` is preferred over a match on a reference `&T`
+        // After Rust 2018 you can use self here and tail (with no ref) below as well,
+        // rust will infer &s and ref tail. 
+        
+        match *self {
+            // Can't take ownership of the tail, because `self` is borrowed;
+            // Instead take a reference to the tail
+            Cons(_, ref tail) => 1 + tail.len(),
+            // Base Case: An empty list has zero length
+            Nil => 0
+        }
+    }
+
+    // Return representation of the list as a (heap allocated) string
+    fn stringify(&self) -> String {
+        match *self {
+            Cons(head, ref tail) => {
+                // `format!` is similar to `print!`, but returns a heap
+                // allocated string instead of printing to the console
+                format!("{}, {}", head, tail.stringify())
+            },
+            Nil => {
+                format!("Nil")
+            },
+        }
+    }
+}
+
+fn main() {
+    // Create an empty linked list
+    let mut list = List::new();
+
+    // Prepend some elements
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+
+    // Show the final state of the list
+    println!("linked list has length: {}", list.len());
+    println!("{}", list.stringify());
+}
+
+
+use crate::List::*;
+
+enum List {
+    Cons(u32, Box<List>),
+    Nil,
+}
+
+// Methods can be attached to an enum
+impl List {
+    // Create an empty list
+    fn new() -> List {
+        Nil
+    }
+
+    // Consume a list, and return the same list with a new element at its front
+    fn prepend(self, elem: u32) -> List {
+        // `Cons` also has type List
+        Cons(elem, Box::new(self))
+    }
+
+    fn append(&mut self, elem: u32)  {
+        match self {
+           Cons(_, tail) =>  tail.append(elem),
+           Nil =>  {
+              *self = Cons(elem, Box::new(Nil)) 
+           }
+        }
+    }
+    // Return the length of the list
+    fn len(&self) -> u32 {
+        // `self` has to be matched, because the behavior of this method
+        // depends on the variant of `self`
+        // `self` has type `&List`, and `*self` has type `List`, matching on a
+        // concrete type `T` is preferred over a match on a reference `&T`
+        // After Rust 2018 you can use self here and tail (with no ref) below as well,
+        // rust will infer &s and ref tail. 
+        
+        match *self {
+            // Can't take ownership of the tail, because `self` is borrowed;
+            // Instead take a reference to the tail
+            Cons(_, ref tail) => 1 + tail.len(),
+            // Base Case: An empty list has zero length
+            Nil => 0
+        }
+    }
+
+    // Return representation of the list as a (heap allocated) string
+    fn stringify(&self) -> String {
+        match *self {
+            Cons(head, ref tail) => {
+                // `format!` is similar to `print!`, but returns a heap
+                // allocated string instead of printing to the console
+                format!("{}, {}", head, tail.stringify())
+            },
+            Nil => {
+                format!("Nil")
+            },
+        }
+    }
+}
+
+fn main() {
+    // Create an empty linked list
+    let mut list = List::new();
+
+    // Prepend some elements
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+    list.append(5);
+
+    // Show the final state of the list
+    println!("linked list has length: {}", list.len());
+    println!("{}", list.stringify());
+}
+
+
+
+
