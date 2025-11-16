@@ -1,0 +1,256 @@
+use of pin
+
+use std::pin::Pin;
+use std::marker::PhantomPinned;
+use std::ptr::NonNull;
+
+
+struct SelfReferential {
+   data : String,
+   ptr_to_data : NonNull<String>,
+   _marker : PhantomPinned,
+}
+
+
+impl SelfReferential {
+  
+  fn new (data : String) -> Pin<Box<Self>> {
+    
+      let mut s = SelfReferential {
+        data,
+        ptr_to_data : NonNull::dangling(),
+        _marker:PhantomPinned,
+      };
+      
+      let ptr_to_data = NonNull::from(&s.data);
+      s.ptr_to_data = ptr_to_data;
+      Box::pin(s)
+  }
+  
+  fn print_data(&self) {
+    println!("Data : {}  ",self.data);
+  }
+  
+  
+}
+
+
+fn main() {
+  
+   let s = SelfReferential::new("Hello".to_string());
+   s.print_data();
+  
+}
+
+
+
+https://practice.course.rs/collections/vector.html
+
+
+fn main() {
+    let arr: [u8; 3] = [1, 2, 3];
+    
+    let v = Vec::from(&arr as &[u8]);
+    is_vec(&v);
+
+    let v = vec![1, 2, 3];
+    is_vec(&v);
+
+    // vec!(..) and vec![..] are same macros, so
+    let v = vec!(1, 2, 3);
+    is_vec(&v);
+    
+    // In code below, v is Vec<[u8; 3]> , not Vec<u8>
+    // USE Vec::new and `for` to rewrite the below code 
+    let v1 = arr.to_vec();
+    is_vec(&v1);
+ 
+    assert_eq!(v, v1);
+
+    println!("Success!");
+}
+
+fn is_vec(v: &Vec<u8>) {
+  
+  println!("Checking Vector");
+  
+}
+
+==================
+
+// FILL in the blank
+fn main() {
+    let mut v1 = [1, 2, 4].to_vec();
+    v1.pop();
+    v1.push(3);
+    
+    let mut v2 = Vec::new();
+    v2.extend(&v1);
+
+    assert_eq!(v1, v2);
+
+    println!("Success!");
+}
+===========
+
+// FILL in the blanks
+fn main() {
+    // Array -> Vec
+    // impl From<[T; N]> for Vec
+    let arr = [1, 2, 3];
+    let v1 = Vec::from(arr);
+    let v2: Vec<i32> = arr.to_vec();
+ 
+    assert_eq!(v1, v2);
+ 
+    
+    // String -> Vec
+    // impl From<String> for Vec
+    let s = "hello".to_string();
+    let v1: Vec<u8> = s.into_bytes()();
+
+    let s = "hello".to_string();
+    let v2 = s.into_bytes();
+    assert_eq!(v1, v2);
+
+    // impl<'_> From<&'_ str> for Vec
+    let s = "hello";
+    let v3 = Vec::from(s);
+    assert_eq!(v2, v3);
+
+    // Iterators can be collected into vectors
+    let v4: Vec<i32> = [0; 10].into_iter().collect();
+    assert_eq!(v4, vec![0; 10]);
+
+    println!("Success!");
+ }
+
+==============
+
+// FIX the error and IMPLEMENT the code
+fn main() {
+   let mut v = Vec::from( [1, 2, 3,4,5,6]);
+    for i in 0..5 {
+        println!("{:?}", v[i]);
+    }
+
+    for i in 0..5 {
+        println!("{:p}",&v[i])
+    }
+    
+    
+    assert_eq!(&v[1..], vec![2, 3, 4, 5, 6]);
+
+    println!("Success!");
+}
+
+================
+
+// FIX the errors
+fn main() {
+    let mut v = vec![1, 2, 3];
+
+    let slice1 = &v[..];
+    // Out of bounds will cause a panic
+    // You must use `v.len` here
+    let slice2 = &v[0..v.len()];
+    
+    assert_eq!(slice1, slice2);
+    
+    // A slice can also be mutable, in which
+    // case mutating it will mutate its underlying Vec.
+    // Note: slice and &Vec are different
+    let vec_ref: &mut Vec<i32> = &mut v;
+    (*vec_ref).push(4);
+    let slice3 = &mut v[0..4];
+    slice3[3] = 42;
+
+    assert_eq!(slice3, &[1, 2, 3, 42]);
+    assert_eq!(v, &[1, 2, 3, 42]);
+
+    println!("Success!");
+}
+===-=============
+// FIX the errors
+fn main() {
+    let mut vec = Vec::with_capacity(10);
+
+    // The vector contains no items, even though it has capacity for more
+    assert_eq!(vec.len(), 0);
+    assert_eq!(vec.capacity(), 10);
+
+    // These are all done without reallocating...
+    for i in 0..10 {
+        vec.push(i);
+    }
+    assert_eq!(vec.len(), 10);
+    assert_eq!(vec.capacity(), 10);
+
+    // ...but this may make the vector reallocate
+    vec.push(11);
+    assert_eq!(vec.len(), 11);
+    assert!(vec.capacity() >= 11);
+
+
+    // Fill in an appropriate value to make the `for` done without reallocating 
+    let mut vec = Vec::with_capacity(100);
+    for i in 0..100 {
+        vec.push(i);
+    }
+
+    assert_eq!(vec.len(), 100);
+    assert_eq!(vec.capacity(), 100);
+    
+    println!("Success!");
+}
+
+================
+#[derive(Debug,PartialEq)]
+enum IpAddr {
+    V4(String),
+    V6(String),
+}
+fn main() {
+    // FILL in the blank
+    let v : Vec<IpAddr>= Vec::from([IpAddr::V4("127.0.0.1".to_string()),IpAddr::V6("::1".to_string())]);
+    
+    // Comparing two enums need to derive the PartialEq trait
+    assert_eq!(v[0], IpAddr::V4("127.0.0.1".to_string()));
+    assert_eq!(v[1], IpAddr::V6("::1".to_string()));
+
+    println!("Success!");
+}
+
+============
+trait IpAddr {
+    fn display(&self);
+}
+
+struct V4(String);
+impl IpAddr for V4 {
+    fn display(&self) {
+        println!("ipv4: {:?}",self.0)
+    }
+}
+struct V6(String);
+impl IpAddr for V6 {
+    fn display(&self) {
+        println!("ipv6: {:?}",self.0)
+    }
+}
+
+fn main() {
+    // FILL in the blank
+    let v: Vec<Box<dyn IpAddr>>= vec![
+        Box::new(V4("127.0.0.1".to_string())),
+        Box::new(V6("::1".to_string())),
+    ];
+
+    for ip in v {
+        ip.display();
+    }
+}
+
+===============================
+
+
