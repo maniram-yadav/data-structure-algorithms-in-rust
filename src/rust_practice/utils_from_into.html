@@ -1,0 +1,204 @@
+
+
+https://practice.course.rs/type-conversions/from-into.html
+
+
+fn main() {
+    let my_str = "hello";
+
+    // three conversions below all depends on the fact: String implements From<&str>:
+    let string1 = String::from(my_str);
+    let string2 = my_str.to_string();
+    // Explicit type annotation is required here
+    let string3: String = my_str.into();
+}
+
+==============
+
+fn main() {
+    // impl From<bool> for i32
+    let i1: i32 = false.into();
+    let i2: i32 = i32::from(false);
+    assert_eq!(i1, i2);
+    assert_eq!(i1, 0);
+
+    // FIX the error in two ways
+    /* 1. use a similar type which `impl From<char>`, maybe you
+    should check the docs mentioned above to find the answer */
+    // 2. a keyword from the last chapter
+    let i3: i32 = u32::from('a') as i32;
+
+    // FIX the error in two ways
+    let s: String = 'a'.to_string();
+
+    println!("Success!");
+}
+
+
+=========
+fn main() {
+    let arr :[u64; 13] = [0; 13];
+    assert_eq!(std::mem::size_of_val(&arr), 8 * 13);
+    let a: *const [u64] = &arr;
+    let b = a as *const [u8];
+    unsafe {
+        assert_eq!(std::mem::size_of_val(&*b), 13)
+    }
+    println!("Success")
+}
+
+=======
+
+https://practice.course.rs/type-conversions/others.html
+
+use std::fmt;
+
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl fmt::Display for Point {
+    fn fmt(&self,f:&mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+fn main() {
+    let origin = Point { x: 0, y: 0 };
+    // FILL in the blanks
+    assert_eq!(origin.to_string(), "(0, 0)");
+    assert_eq!(format!("The point is {}",origin), "The point is (0, 0)");
+
+
+========
+// To use `from_str` method, you need to introduce this trait into the current scope.
+use std::str::FromStr;
+
+fn main() {
+    let parsed: i32 = "5".parse().unwrap();
+    let turbo_parsed = "10".parse::<i32>().unwrap();
+    let from_str = i32::from_str("20").unwrap();
+    let sum = parsed + turbo_parsed + from_str;
+    assert_eq!(sum, 35);
+
+    println!("Success!");
+}
+
+=====================
+use std::str::FromStr;
+use std::num::ParseIntError;
+
+#[derive(Debug, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32
+}
+
+impl FromStr for Point {
+    type Err = ParseIntError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let coords: Vec<&str> = s.trim_matches(|p| p == '(' || p == ')' )
+                                 .split(',')
+                                 .map(|x| x.trim())
+                                 .collect();
+
+        let x_fromstr = coords[0].parse::<i32>()?;
+        let y_fromstr = coords[1].parse::<i32>()?;
+
+        Ok(Point { x: x_fromstr, y: y_fromstr })
+    }
+}
+fn main() {
+
+    let p = "3,4".parse::<Point>();
+    // let p = Point::from_str("3,4");
+    assert_eq!(p.unwrap(), Point{ x: 3, y: 4} );
+
+    println!("Success!");
+}
+
+==================
+fn foo() -> i32 {
+    0
+}
+
+fn main() {
+    let pointer = foo as *const ();
+    let function = unsafe {
+        std::mem::transmute::<*const (), fn() -> i32>(pointer)
+    };
+    assert_eq!(function(), 0);
+    println!("success!")
+}
+
+==============
+struct R<'a>(&'a i32);
+unsafe fn extend_lifetime<'b>(r: R<'b>) -> R<'static> {
+    std::mem::transmute::<R<'b>, R<'static>>(r)
+}
+
+unsafe fn shorten_invariant_lifetime<'b, 'c>(r: &'b mut R<'static>)
+                                             -> &'b mut R<'c> {
+    std::mem::transmute::<&'b mut R<'static>, &'b mut R<'c>>(r)
+}
+fn main() {
+    
+    println!("Success!");
+}
+
+=================
+
+    println!("Success!");
+}
+
+
+
+
+=============
+
+fn main() {
+    /*Turning raw bytes(&[u8]) to u32, f64, etc.: */
+    let raw_bytes = [0x78, 0x56, 0x34, 0x12];
+
+    let num = unsafe { std::mem::transmute::<[u8; 4], u32>(raw_bytes) };
+
+    // Use `u32::from_ne_bytes` instead
+    let num = u32::from_ne_bytes(raw_bytes);
+    // Or use `u32::from_le_bytes` or `u32::from_be_bytes` to specify the endianness
+    let num = u32::from_le_bytes(raw_bytes);
+    assert_eq!(num, 0x12345678);
+    let num = u32::from_be_bytes(raw_bytes);
+    assert_eq!(num, 0x78563412);
+
+    /*Turning a pointer into a usize: */
+    let ptr = &0;
+    let ptr_num_transmute = unsafe { std::mem::transmute::<&i32, usize>(ptr) };
+
+    // Use an `as` cast instead
+    let ptr_num_cast = ptr as *const i32 as usize;
+
+    /*Turning an &mut T into an &mut U: */
+    let ptr = &mut 0;
+    let val_transmuted = unsafe { std::mem::transmute::<&mut i32, &mut u32>(ptr) };
+
+    // Now, put together `as` and reborrowing - note the chaining of `as`
+    // `as` is not transitive
+    let val_casts = unsafe { &mut *(ptr as *mut i32 as *mut u32) };
+
+    /*Turning an &str into a &[u8]: */
+    // This is not a good way to do this.
+    let slice = unsafe { std::mem::transmute::<&str, &[u8]>("Rust") };
+    assert_eq!(slice, &[82, 117, 115, 116]);
+
+    // You could use `str::as_bytes`
+    let slice = "Rust".as_bytes();
+    assert_eq!(slice, &[82, 117, 115, 116]);
+
+    // Or, just use a byte string, if you have control over the string
+    // literal
+    assert_eq!(b"Rust", &[82, 117, 115, 116]);
+}
+
+============
