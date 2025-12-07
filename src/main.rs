@@ -4,7 +4,8 @@ mod tree;
 mod concurrent;
 mod features;
 mod macros;
-mod kth_largest;
+// mod heap/kth_largest;
+mod union_find;
 use tree::binarytree::{BinaryTree,BinaryNode};
 use concurrent::concurrent::*;
 
