@@ -10,4 +10,4 @@ macro_rules! pow {
 fn main() {
     assert_eq!(pow!(squared 2_i32), 4);
     assert_eq!(pow!(cubed 2_i32), 8);
-}
+}a
