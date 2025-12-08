@@ -64,7 +64,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_level_order(){
+    fn test_preorder(){
        let left15 = Rc::new(RefCell::new(TreeNode::new(15)));
     let right7 = Rc::new(RefCell::new(TreeNode::new(7)));
     let right20 = Rc::new(RefCell::new(TreeNode{

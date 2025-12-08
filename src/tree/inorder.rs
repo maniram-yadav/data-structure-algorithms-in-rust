@@ -21,13 +21,14 @@ impl TreeNode {
    
 }
 
-pub fn postorder_traversal(root:Option<Rc<RefCell<TreeNode>>>, result : &mut Vec<i32>) {
+pub fn inorder_traversal(root:Option<Rc<RefCell<TreeNode>>>, result : &mut Vec<i32>) {
     
     if let Some(node) = root {
         let n_borrow = node.borrow();
-        postorder_traversal(n_borrow.left.clone(),result);
-        postorder_traversal(n_borrow.right.clone(),result);
+        inorder_traversal(n_borrow.left.clone(),result);
         result.push(n_borrow.val);
+        inorder_traversal(n_borrow.right.clone(),result);
+        
     }
 }
  
@@ -54,9 +55,10 @@ fn main(){
             right :Some(right20),
         }));
     let mut result:Vec<i32> = Vec::new();
-    postorder_traversal(Some(root3),&mut result);
-    println!("Post Order {:?}",result);
+    inorder_traversal(Some(root3),&mut result);
+    println!("InOrder  {:?}",result);
 }
+
 
 
 #[cfg(test)]
@@ -64,7 +66,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_postorder(){
+    fn test_inorder(){
        let left15 = Rc::new(RefCell::new(TreeNode::new(15)));
     let right7 = Rc::new(RefCell::new(TreeNode::new(7)));
     let right20 = Rc::new(RefCell::new(TreeNode{
@@ -79,9 +81,9 @@ mod tests {
             right :Some(right20),
         }));
     let mut result:Vec<i32> = Vec::new();
-    postorder_traversal(Some(root3),&mut result);
-    assert_eq!(result, vec![9,15,7,20,3]);
-    println!("Post Order {:?}",result);
+    inorder_traversal(Some(root3),&mut result);
+    assert_eq!(result, vec![9,3,15,20,7]);
+    println!("InOrder  {:?}",result);
     }
 
 }
