@@ -1,12 +1,23 @@
-// kruskal mst
 
-use std::collections::{HashMap};
+
+// kruskal mst
 
 #[derive(Debug,PartialEq,Eq,PartialOrd,Ord,Clone,Copy)]
 struct Edge {
     source : usize,
     dest : usize,
     cost : usize,
+}
+
+impl Edge {
+
+    fn new(source:usize,dest:usize,cost:usize) -> Self {
+        Self{
+            source,
+            dest,
+            cost,
+        }
+    }    
 }
 
 struct UnionFind{
@@ -16,7 +27,7 @@ struct UnionFind{
 
 impl UnionFind {
 
-    fn new(n:usize) -> Self {
+   pub fn new(n:usize) -> Self {
             Self{
                 parent:(0..n).collect(),
                 rank:vec![0;n],
@@ -47,20 +58,59 @@ impl UnionFind {
         }
     }
     
-    fn kruskal_mst(&mut self,edges : Vec<Vec<Edge>>) -> Option<(i32,Vec<Edge>)> {
-        
-    }
     
 }
 
 
+fn kruskal_mst(edges : &mut Vec<Edge>, num_vertices : usize) -> Option<(usize,Vec<Edge>)> {
+      
+        edges.sort_by_key(|e| e.cost);
+        let mut uf = UnionFind::new(num_vertices);
+        let mut mst_edges = Vec::new();
+        let mut total_cost = 0;
+        let mut edge_count = 0;
+        
+        for &edge in edges.iter() {
+            uf.union(edge.source,edge.dest);
+            mst_edges.push(edge);
+            total_cost += edge.cost;
+            edge_count += 1;
+            if edge_count == num_vertices-1 {
+                break;
+            }
+        }
+        if edge_count == num_vertices-1 {
+            Some((total_cost,mst_edges))
+        } else {
+            None
+        }
+        
+}
 
 fn main(){
     
-    let num_cources:i32  = 5;
-    let mut prereq:Vec<Vec<usize>> =  Vec::new();
-    prereq.push(vec![0,1]);
-    prereq.push(vec![1,2]);
-    prereq.push(vec![2,3]);
+   let mut edges = vec![
+        Edge::new(0, 1, 4),
+        Edge::new(0, 2, 6),
+        Edge::new(0, 3, 3),
+        Edge::new(1, 2, 5),
+        Edge::new(2, 3, 2),
+        Edge::new(2, 4, 7),
+        Edge::new(3, 4, 4),
+    ];
+    let num_vertices = 5;
+    
+    match kruskal_mst(&mut edges,num_vertices) {
+    
+    Some((cost,mst_edges)) => {
+            println!("Total MST Cost : {}",cost);
+            println!("Edges in Mst : {:?}",mst_edges);
+        
+    }
+    None => {
+        println!("Graph is disconnected, cannot form a single MST.");
+    }
+        
+    }
     
 }
