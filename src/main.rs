@@ -6,6 +6,7 @@ mod features;
 mod macros;
 mod heap;
 mod union_find;
+mod trie;
 use tree::binarytree::{BinaryTree,BinaryNode};
 use concurrent::concurrent::*;
 
