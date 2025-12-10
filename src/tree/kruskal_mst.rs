@@ -114,3 +114,40 @@ fn main(){
     }
     
 }
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_kruskal_mst(){
+      
+   let mut edges = vec![
+        Edge::new(0, 1, 4),
+        Edge::new(0, 2, 6),
+        Edge::new(0, 3, 3),
+        Edge::new(1, 2, 5),
+        Edge::new(2, 3, 2),
+        Edge::new(2, 4, 7),
+        Edge::new(3, 4, 4),
+    ];
+    let num_vertices = 5;
+    
+    match kruskal_mst(&mut edges,num_vertices) {
+    
+    Some((cost,mst_edges)) => {
+            println!("Total MST Cost : {}",cost);
+            println!("Edges in Mst : {:?}",mst_edges);
+        
+    }
+    None => {
+        println!("Graph is disconnected, cannot form a single MST.");
+    }
+        
+    }
+
+    }
+
+}
