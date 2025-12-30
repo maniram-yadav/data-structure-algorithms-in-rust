@@ -1,7 +1,7 @@
 struct Solution;
 
 impl Solution {
-    /// Checks if an undirected graph is bipartite using DFS.
+    
     fn is_bipartite(graph: Vec<Vec<i32>>) -> bool {
         
         let n = graph.len();
