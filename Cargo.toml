@@ -9,6 +9,10 @@ repository = "https://github.com/maniram-yadav/data-structure-algorithms-in-rust
 [dependencies]
 log = "0.4"
 crossbeam = "0.8"
+tokio = { version = "1.24.1", features = ["full"] }
+futures = "0.3"
+rand = "0.8"
+chrono = "0.4"
 
 [lints.rust]
 unused = "allow"
